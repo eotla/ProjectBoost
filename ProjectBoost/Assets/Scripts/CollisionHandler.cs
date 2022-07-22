@@ -10,6 +10,7 @@ public class CollisionHandler : MonoBehaviour
     [SerializeField] ParticleSystem crashParticles;
 
     AudioSource audioSource;
+    bool collisionDisabled = false;
 
     bool isTransitioning = false;
 
@@ -19,9 +20,14 @@ public class CollisionHandler : MonoBehaviour
         
     }
 
+    private void Update()
+    {
+        RespondToDebugKeys();
+    }
+
     void OnCollisionEnter(Collision collision)
     {
-        if (isTransitioning) { return; }
+        if (isTransitioning || collisionDisabled) { return; }
 
        switch (collision.gameObject.tag)
         {
@@ -38,6 +44,28 @@ public class CollisionHandler : MonoBehaviour
             default:
                 StartCrashSequence();
                 break;
+        }
+    }
+
+    void RespondToDebugKeys()
+    {
+        SkipToNextLevel();
+        DisableCollisions();
+    }
+
+    void SkipToNextLevel()
+    {
+        if (Input.GetKey(KeyCode.L))
+        {
+            LoadNextLevel();
+        }
+    }
+
+    void DisableCollisions()
+    {
+        if (Input.GetKey(KeyCode.C))
+        {
+            collisionDisabled = !collisionDisabled; // toggle collision
         }
     }
 
